@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Article {
+  id              String        @id @default(cuid())
+  title           String
+  slug            String        @unique
+  excerpt         String?       @db.Text
+  content         Json
+  featuredImage   String?
+  imageCaption    String?
+  status          ArticleStatus @default(DRAFT)
+  priority        Int           @default(0)
+  readingTime     Int?
+  views           Int           @default(0)
+
+  // SEO
+  metaTitle       String?
+  metaDescription String?       @db.Text
+  canonicalUrl    String?
+  ogImage         String?
+
+  // Relations
+  categoryId      String
+  category        Category      @relation(fields: [categoryId], references: [id])
+  authorId        String
+  author          Author        @relation(fields: [authorId], references: [id])
+  tags            Tag[]
+
+  // External source
+  sourceApi       String?
+  sourceUrl       String?
+  sourceName      String?
+
+  // Monetization
+  isSponsored       Boolean   @default(false)
+  sponsorName       String?
+  sponsorLogo       String?
+  sponsorUrl        String?
+  isFeaturedPaid    Boolean   @default(false)
+  featuredUntil     DateTime?
+  businessListingId String?
+  businessListing   BusinessListing? @relation(fields: [businessListingId], references: [id])
+
+  publishedAt     DateTime?
+  scheduledAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([status, publishedAt])
+  @@index([priority, publishedAt])
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  color       String?
+  order       Int       @default(0)
+  articles    Article[]
+
+  @@index([slug])
+}
+
+model Author {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  email     String    @unique
+  bio       String?   @db.Text
+  avatar    String?
+  role      String    @default("writer")
+  articles  Article[]
+}
+
+model Tag {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  slug     String    @unique
+  articles Article[]
+}
+
+model BusinessListing {
+  id                String   @id @default(cuid())
+  businessName      String
+  slug              String   @unique
+  description       String   @db.Text
+  shortDescription  String?
+  logo              String?
+  website           String
+  phone             String?
+  email             String?
+  city              String?
+  state             String?
+  country           String   @default("US")
+  categorySlug      String
+  plan              String   @default("basic")
+  status            String   @default("active")
+  isFeatured        Boolean  @default(false)
+  linkType          String   @default("nofollow")
+  clicks            Int      @default(0)
+  impressions       Int      @default(0)
+  articles          Article[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([slug])
+  @@index([plan, status])
+  @@index([isFeatured])
+}
+
+model AdPlacement {
+  id              String   @id @default(cuid())
+  name            String
+  position        String
+  size            String
+  imageUrl        String?
+  targetUrl       String
+  isActive        Boolean  @default(true)
+  advertiserName  String
+  clicks          Int      @default(0)
+  impressions     Int      @default(0)
+  createdAt       DateTime @default(now())
+}
+
+model SiteSettings {
+  id                 String  @id @default("main")
+  siteName           String  @default("New York Journal American")
+  tagline            String  @default("An American Paper for the American People")
+  breakingNewsText   String?
+  breakingNewsActive Boolean @default(false)
+}
+
+model Newsletter {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+enum ArticleStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+}

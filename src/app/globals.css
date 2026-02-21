@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+:root {
+  --navy-primary: #1B2A4A;
+  --navy-dark: #0F1B33;
+  --red-accent: #B22234;
+  --red-hover: #8B1A29;
+  --white-bg: #FFFFFF;
+  --off-white: #F8F9FA;
+  --dark-text: #1A1A2E;
+  --medium-gray: #6B7280;
+  --gold-accent: #C9A84C;
+  --font-headline: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+@theme inline {
+  --color-navy: #1B2A4A;
+  --color-navy-dark: #0F1B33;
+  --color-red-accent: #B22234;
+  --color-red-hover: #8B1A29;
+  --color-off-white: #F8F9FA;
+  --color-dark-text: #1A1A2E;
+  --color-medium-gray: #6B7280;
+  --color-gold: #C9A84C;
+  --font-headline: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--dark-text);
+  background: var(--white-bg);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headline);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  animation: ticker 30s linear infinite;
+}
+
+.article-content p {
+  margin-bottom: 1.25rem;
+  line-height: 1.8;
+}

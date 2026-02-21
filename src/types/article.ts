@@ -1,0 +1,40 @@
+export interface Article {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: any;
+  featuredImage: string | null;
+  imageCaption: string | null;
+  status: "DRAFT" | "PUBLISHED" | "SCHEDULED" | "ARCHIVED";
+  priority: number;
+  readingTime: number | null;
+  views: number;
+  metaTitle: string | null;
+  metaDescription: string | null;
+  canonicalUrl: string | null;
+  ogImage: string | null;
+  categoryId: string;
+  category?: Category;
+  authorId: string;
+  author?: Author;
+  tags?: Tag[];
+  sourceApi: string | null;
+  sourceUrl: string | null;
+  sourceName: string | null;
+  isSponsored: boolean;
+  sponsorName: string | null;
+  sponsorLogo: string | null;
+  sponsorUrl: string | null;
+  isFeaturedPaid: boolean;
+  featuredUntil: string | null;
+  businessListingId: string | null;
+  publishedAt: string | null;
+  scheduledAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+import { Category } from "./category";
+import { Author } from "./author";
+import { Tag } from "./tag";
