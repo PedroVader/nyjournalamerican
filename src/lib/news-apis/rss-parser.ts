@@ -33,23 +33,54 @@ const parser = new Parser<CustomFeed, CustomItem>({
 });
 
 const RSS_FEEDS: Record<string, string> = {
+  // U.S. & General News
   ap_news: "https://rsshub.app/apnews/topics/apf-topnews",
   reuters: "https://rsshub.app/reuters/world",
   nyt_us: "https://rss.nytimes.com/services/xml/rss/nyt/US.xml",
-  nyt_politics: "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml",
-  nyt_business: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",
-  nyt_tech: "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
   bbc_us: "http://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml",
   fox_latest: "https://moxie.foxnews.com/google-publisher/latest.xml",
   cnn_top: "http://rss.cnn.com/rss/cnn_topstories.rss",
+  npr_news: "https://feeds.npr.org/1001/rss.xml",
+  abc_top: "https://abcnews.go.com/abcnews/topstories",
+  usatoday: "http://rss.usatoday.com/breakingnews",
+
+  // Politics
+  nyt_politics: "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml",
+  politico: "https://www.politico.com/rss/politicopicks.xml",
+  thehill: "https://thehill.com/feed/",
+
+  // World
   wsj_world: "https://feeds.a.dj.com/rss/RSSWorldNews.xml",
-  cnbc_top:
-    "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114",
+  bbc_world: "http://feeds.bbci.co.uk/news/world/rss.xml",
+  guardian_world: "https://www.theguardian.com/world/rss",
+
+  // Business & Finance
+  nyt_business: "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",
+  cnbc_top: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114",
+  marketwatch: "https://feeds.marketwatch.com/marketwatch/topstories/",
+  fortune: "https://fortune.com/feed/",
+
+  // Technology
+  nyt_tech: "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
   techcrunch: "https://techcrunch.com/feed/",
   verge: "https://www.theverge.com/rss/index.xml",
   ars: "https://feeds.arstechnica.com/arstechnica/index",
+  wired: "https://www.wired.com/feed/rss",
+  engadget: "https://www.engadget.com/rss.xml",
+
+  // Sports
   espn: "https://www.espn.com/espn/rss/news",
+  cbssports: "https://www.cbssports.com/rss/headlines/",
+
+  // Science & Health
   nasa: "https://www.nasa.gov/rss/dyn/breaking_news.rss",
+  livescience: "https://www.livescience.com/feeds/all",
+  medline: "https://medlineplus.gov/feeds/topic/3.xml",
+
+  // Entertainment
+  ew: "https://ew.com/feed/",
+  variety: "https://variety.com/feed/",
+  hollywood: "https://www.hollywoodreporter.com/feed/",
 };
 
 function extractImageFromHtml(html: string | undefined | null): string | null {

@@ -102,16 +102,17 @@ export async function GET(request: Request) {
       }
 
       // Try to scrape full article content from the source URL
-      let contentBlocks: { type: string; content: { type: string; text: string }[] }[] = [];
+      let contentBlocks: any[] = [];
       let wordCount = 0;
 
       const scraped = await scrapeArticleContent(article.url);
       if (scraped && scraped.length > 0) {
-        contentBlocks = scraped.map((p) => ({
-          type: "paragraph",
-          content: [{ type: "text", text: p }],
-        }));
-        wordCount = scraped.join(" ").split(/\s+/).length;
+        contentBlocks = scraped;
+        wordCount = scraped
+          .filter((b) => b.content?.length)
+          .map((b) => b.content.map((c: any) => c.text).join(" "))
+          .join(" ")
+          .split(/\s+/).length;
       } else {
         // Fallback to RSS description
         contentBlocks = [

@@ -1,6 +1,55 @@
+interface ContentBlock {
+  type: "paragraph" | "heading" | "blockquote" | "list";
+  content: { type: "text"; text: string }[];
+  attrs?: { level?: number };
+  items?: string[];
+}
+
+function decodeEntities(text: string): string {
+  return text
+    .replace(/<[^>]+>/g, "")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&#\d+;/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+const NOISE_PATTERNS = [
+  /^advertisement$/i,
+  /^subscribe/i,
+  /^sign up/i,
+  /^read more/i,
+  /^copyright/i,
+  /^share this/i,
+  /^follow us/i,
+  /^related:/i,
+  /^recommended/i,
+  /^trending/i,
+  /^also read/i,
+  /^click here/i,
+  /cookie/i,
+  /newsletter/i,
+  /^loading/i,
+  /^please enable/i,
+  /^this (article|story) (is|was) (originally|first) published/i,
+  /^get the app/i,
+  /^download our/i,
+];
+
+function isNoise(text: string): boolean {
+  if (text.length < 30) return true;
+  return NOISE_PATTERNS.some((p) => p.test(text));
+}
+
 export async function scrapeArticleContent(
   url: string
-): Promise<string[] | null> {
+): Promise<ContentBlock[] | null> {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
@@ -20,55 +69,74 @@ export async function scrapeArticleContent(
 
     const html = await res.text();
 
-    // Try to find article body using common selectors via regex
-    // Look for <article>, [class*="article-body"], [class*="story-body"], etc.
+    // Try to find article body
     const articleMatch =
+      html.match(/<article[^>]*>([\s\S]*?)<\/article>/i) ||
       html.match(
-        /<article[^>]*>([\s\S]*?)<\/article>/i
+        /<div[^>]+class="[^"]*(?:article-body|story-body|entry-content|post-content|article-content|ArticleBody|StoryBodyCompanionColumn|article__body|story__content)[^"]*"[^>]*>([\s\S]*?)<\/div>/i
       ) ||
-      html.match(
-        /<div[^>]+class="[^"]*(?:article-body|story-body|entry-content|post-content|article-content|ArticleBody|StoryBodyCompanionColumn)[^"]*"[^>]*>([\s\S]*?)<\/div>/i
-      );
+      html.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
 
-    const bodyHtml = articleMatch?.[1] || html;
+    const bodyHtml = articleMatch?.[1] || articleMatch?.[2] || html;
 
-    // Extract all <p> tags content
-    const paragraphs: string[] = [];
-    const pRegex = /<p[^>]*>([\s\S]*?)<\/p>/gi;
+    const blocks: ContentBlock[] = [];
+
+    // Extract headings, paragraphs, blockquotes, and lists in order
+    const blockRegex =
+      /<(h[2-4]|p|blockquote|ul|ol)[^>]*>([\s\S]*?)<\/\1>/gi;
     let match;
 
-    while ((match = pRegex.exec(bodyHtml)) !== null) {
-      // Strip HTML tags from paragraph content
-      let text = match[1]
-        .replace(/<[^>]+>/g, "")
-        .replace(/&amp;/g, "&")
-        .replace(/&lt;/g, "<")
-        .replace(/&gt;/g, ">")
-        .replace(/&quot;/g, '"')
-        .replace(/&#039;/g, "'")
-        .replace(/&apos;/g, "'")
-        .replace(/&nbsp;/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
+    while ((match = blockRegex.exec(bodyHtml)) !== null) {
+      const tag = match[1].toLowerCase();
+      const rawContent = match[2];
+      const text = decodeEntities(rawContent);
 
-      // Filter out short lines, navigation text, ads, etc.
-      if (
-        text.length > 40 &&
-        !text.startsWith("Advertisement") &&
-        !text.startsWith("Subscribe") &&
-        !text.startsWith("Sign up") &&
-        !text.startsWith("Read more") &&
-        !text.startsWith("Copyright") &&
-        !text.includes("cookie") &&
-        !text.includes("newsletter")
-      ) {
-        paragraphs.push(text);
+      if (tag.startsWith("h")) {
+        if (text.length > 5 && text.length < 200 && !isNoise(text)) {
+          const level = parseInt(tag[1]);
+          blocks.push({
+            type: "heading",
+            content: [{ type: "text", text }],
+            attrs: { level },
+          });
+        }
+      } else if (tag === "blockquote") {
+        // Extract inner paragraphs from blockquote
+        const innerText = decodeEntities(rawContent);
+        if (innerText.length > 20 && !isNoise(innerText)) {
+          blocks.push({
+            type: "blockquote",
+            content: [{ type: "text", text: innerText }],
+          });
+        }
+      } else if (tag === "ul" || tag === "ol") {
+        const items: string[] = [];
+        const liRegex = /<li[^>]*>([\s\S]*?)<\/li>/gi;
+        let liMatch;
+        while ((liMatch = liRegex.exec(rawContent)) !== null) {
+          const liText = decodeEntities(liMatch[1]);
+          if (liText.length > 10) items.push(liText);
+        }
+        if (items.length >= 2) {
+          blocks.push({
+            type: "list",
+            content: [],
+            items,
+          });
+        }
+      } else if (tag === "p") {
+        if (!isNoise(text)) {
+          blocks.push({
+            type: "paragraph",
+            content: [{ type: "text", text }],
+          });
+        }
       }
     }
 
-    // Return paragraphs if we found meaningful content (at least 3 paragraphs)
-    if (paragraphs.length >= 3) {
-      return paragraphs.slice(0, 15); // Cap at 15 paragraphs
+    // Need at least 3 meaningful blocks
+    if (blocks.filter((b) => b.type === "paragraph").length >= 3) {
+      return blocks.slice(0, 25);
     }
 
     return null;

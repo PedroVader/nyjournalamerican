@@ -59,25 +59,56 @@ const CATEGORY_MAP: Record<string, string> = {
   science: "science",
   general: "us",
 
-  // RSS source-based mapping
-  nyt_politics: "politics",
-  nyt_business: "business",
-  nyt_tech: "technology",
+  // U.S. & General
+  ap_news: "us",
   nyt_us: "us",
+  bbc_us: "us",
   fox_latest: "us",
   cnn_top: "us",
-  espn: "sports",
-  techcrunch: "technology",
-  bloomberg: "business",
-  cnbc_top: "business",
-  nasa: "science",
-  nature: "science",
-  ap_news: "us",
+  npr_news: "us",
+  abc_top: "us",
+  usatoday: "us",
+
+  // Politics
+  nyt_politics: "politics",
+  politico: "politics",
+  thehill: "politics",
+
+  // World
   reuters: "world",
-  bbc_us: "us",
   wsj_world: "world",
+  bbc_world: "world",
+  guardian_world: "world",
+
+  // Business & Finance
+  nyt_business: "business",
+  cnbc_top: "business",
+  bloomberg: "business",
+  marketwatch: "business",
+  fortune: "business",
+
+  // Technology
+  nyt_tech: "technology",
+  techcrunch: "technology",
   verge: "technology",
   ars: "technology",
+  wired: "technology",
+  engadget: "technology",
+
+  // Sports
+  espn: "sports",
+  cbssports: "sports",
+
+  // Science & Health
+  nasa: "science",
+  livescience: "science",
+  nature: "science",
+  medline: "health",
+
+  // Entertainment
+  ew: "entertainment",
+  variety: "entertainment",
+  hollywood: "entertainment",
 };
 
 export function mapToCategory(source: string, apiCategory?: string): string {
