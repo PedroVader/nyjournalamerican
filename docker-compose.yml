@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: nyjournalamerican
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: nyja-db-2026-s3cur3
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  app:
+    build:
+      context: .
+      args:
+        DATABASE_URL: "postgresql://postgres:nyja-db-2026-s3cur3@db:5432/nyjournalamerican"
+    restart: unless-stopped
+    ports:
+      - "3071:3071"
+    environment:
+      DATABASE_URL: "postgresql://postgres:nyja-db-2026-s3cur3@db:5432/nyjournalamerican"
+      NEXT_PUBLIC_URL: "https://newyorkjournalamerican.com"
+      REVALIDATION_SECRET: "594ff4fb1a16ae2602f4ebe251f6f1408c6669fe07bcdc92f1f58957c651e076"
+      CRON_SECRET: "e748e5d8f60b2c2e046d1ccb2ac3739a4517004425a8bb943f234f7068c00b9e"
+      NEWSAPI_KEY: "ef2cf9ec135c4668b6126e5af2da5684"
+      GNEWS_KEY: "330ee32845ef51daca55610cae9e8744"
+      INDEXNOW_KEY: "eae9b1a4b14a03a58937509ac19e2b2e"
+      NEXT_PUBLIC_GA_ID: ""
+    depends_on:
+      db:
+        condition: service_healthy
+  cron:
+    image: alpine:3.19
+    restart: unless-stopped
+    depends_on:
+      - app
+    entrypoint: >
+      sh -c "
+        apk add --no-cache curl &&
+        echo '0 * * * * curl -s -H \"Authorization: Bearer e748e5d8f60b2c2e046d1ccb2ac3739a4517004425a8bb943f234f7068c00b9e\" http://app:3071/api/cron/fetch-news > /dev/null 2>&1' > /etc/crontabs/root &&
+        crond -f -l 2
+      "
+volumes:
+  pgdata:

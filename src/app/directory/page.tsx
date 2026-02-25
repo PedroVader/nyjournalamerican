@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Explore our business directory. Get your business listed on a premium news domain.",
 };
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export default async function DirectoryPage() {
   const [featured, listings] = await Promise.all([

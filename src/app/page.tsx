@@ -6,7 +6,7 @@ import { FeaturedBanner } from "@/components/homepage/FeaturedBanner";
 import { NewsletterCTA } from "@/components/homepage/NewsletterCTA";
 import { generateOrganizationJsonLd } from "@/lib/seo";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 async function getHomepageData() {
   const [latestArticles, categories, popularArticles] = await Promise.all([

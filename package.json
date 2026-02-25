@@ -9,13 +9,16 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.2",
+    "@prisma/adapter-pg": "^7.4.1",
+    "@prisma/client": "^7.4.1",
     "@supabase/supabase-js": "^2.97.0",
+    "@types/pg": "^8.16.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "lucide-react": "^0.575.0",
     "next": "16.1.6",
-    "prisma": "^6.19.2",
+    "pg": "^8.19.0",
+    "prisma": "^7.4.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "rss-parser": "^3.13.0",
