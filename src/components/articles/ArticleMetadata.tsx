@@ -6,8 +6,6 @@ interface ArticleMetadataProps {
   category?: { name: string; slug: string } | null;
   publishedAt?: string | null;
   readingTime?: number | null;
-  sourceName?: string | null;
-  sourceUrl?: string | null;
   compact?: boolean;
 }
 
@@ -16,8 +14,6 @@ export function ArticleMetadata({
   category,
   publishedAt,
   readingTime,
-  sourceName,
-  sourceUrl,
   compact = false,
 }: ArticleMetadataProps) {
   return (
@@ -40,18 +36,6 @@ export function ArticleMetadata({
       )}
       {publishedAt && <span>{formatRelativeTime(publishedAt)}</span>}
       {readingTime && <span>{readingTime} min read</span>}
-      {sourceName && (
-        <span>
-          Source:{" "}
-          {sourceUrl ? (
-            <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:text-dark-text">
-              {sourceName}
-            </a>
-          ) : (
-            sourceName
-          )}
-        </span>
-      )}
     </div>
   );
 }

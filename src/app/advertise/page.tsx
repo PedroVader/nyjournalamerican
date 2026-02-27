@@ -2,56 +2,51 @@
 
 import { useState } from "react";
 
-const packages = [
+const partnershipOptions = [
   {
-    name: "Starter",
+    name: "Sponsored Articles",
+    desc: "Branded content published in relevant sections, reaching our engaged readership with your story.",
     features: [
-      "Article up to 500 words",
-      "1 dofollow backlink",
-      "Published in relevant category",
-      "Indexed by Google",
-      "Permanent placement",
+      "Published in the most relevant section",
+      "Professional editorial review",
+      "Permanent placement on site",
+      "Shared across our channels",
     ],
-    popular: false,
   },
   {
-    name: "Professional",
+    name: "Content Series",
+    desc: "A multi-article partnership for deeper audience engagement and sustained brand visibility.",
     features: [
-      "Article up to 1,000 words",
-      "2 dofollow backlinks",
-      "Custom featured image",
-      "Shared on social media",
-      "Indexed by Google",
-      "Permanent placement",
+      "Multiple articles over time",
+      "Consistent brand presence",
+      "Cross-linked content strategy",
+      "Dedicated editorial support",
     ],
-    popular: true,
   },
   {
-    name: "Premium",
+    name: "Brand Spotlight",
+    desc: "A featured company profile highlighting your brand, mission, and achievements to our audience.",
     features: [
-      "Article up to 1,500 words",
-      "3 dofollow backlinks",
-      "Featured on homepage for 7 days",
-      "Custom images & anchor text",
-      "Priority publishing",
-      "Permanent placement",
+      "In-depth company profile",
+      "Featured placement on site",
+      "Custom imagery and branding",
+      "Long-form storytelling",
     ],
-    popular: false,
   },
 ];
 
 const directoryPlans = [
   {
     name: "Basic",
-    features: ["Business name & link", "Category listing", "Short description", "Nofollow link"],
+    features: ["Business name & link", "Category listing", "Short description"],
   },
   {
     name: "Pro",
-    features: ["Everything in Basic", "Business logo", "Extended description", "Dofollow link"],
+    features: ["Everything in Basic", "Business logo", "Extended description", "Enhanced visibility"],
   },
   {
     name: "Premium",
-    features: ["Everything in Pro", "Featured badge", "Priority placement", "1 guest post/month included"],
+    features: ["Everything in Pro", "Featured badge", "Priority placement", "Highlighted in search"],
   },
 ];
 
@@ -60,7 +55,6 @@ export default function AdvertisePage() {
     name: "",
     email: "",
     company: "",
-    selectedPackage: "",
     message: "",
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -87,12 +81,11 @@ export default function AdvertisePage() {
       <section className="bg-navy-dark text-white py-16 md:py-24">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="font-[family-name:var(--font-headline)] text-4xl md:text-6xl font-bold leading-tight">
-            Publish on<br />New York Journal American
+            Partner With<br />New York Journal American
           </h1>
           <p className="text-gray-300 text-xl mt-6 max-w-2xl mx-auto">
-            Reach a US-focused audience with a guest post on one of America&apos;s
-            historic news publications. Get permanent dofollow backlinks from a
-            trusted news domain.
+            Reach millions through premium content partnerships with one of
+            America&apos;s historic news publications.
           </p>
           <div className="flex flex-wrap justify-center gap-8 mt-10 text-center">
             <div>
@@ -100,28 +93,28 @@ export default function AdvertisePage() {
               <p className="text-sm text-gray-400">Years of Legacy</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-gold">24-48h</p>
-              <p className="text-sm text-gray-400">Publishing Time</p>
+              <p className="text-3xl font-bold text-gold">Millions</p>
+              <p className="text-sm text-gray-400">Monthly Readers</p>
             </div>
             <div>
-              <p className="text-3xl font-bold text-gold">100%</p>
-              <p className="text-sm text-gray-400">Permanent Links</p>
+              <p className="text-3xl font-bold text-gold">Premium</p>
+              <p className="text-sm text-gray-400">US Audience</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Why Us */}
+      {/* Why Partner */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <h2 className="font-[family-name:var(--font-headline)] text-3xl font-bold text-dark-text text-center mb-10">
-          Why Publish With Us
+          Why Partner With Us
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
-            { title: "Premium Domain", desc: "A recognized news brand with over 140 years of history." },
-            { title: "US Audience", desc: "Content reaches an American, English-speaking readership." },
-            { title: "Fast Publishing", desc: "Articles reviewed and published within 24-48 hours." },
-            { title: "Permanent Links", desc: "All published content stays live permanently. We never remove posts." },
+            { title: "Brand Visibility", desc: "Showcase your brand to a large, engaged American readership." },
+            { title: "Trusted Platform", desc: "A recognized news brand with over 140 years of editorial heritage." },
+            { title: "Premium Audience", desc: "Our readers are educated, influential decision-makers across the US." },
+            { title: "Permanent Content", desc: "All published content remains live on our platform indefinitely." },
           ].map((item) => (
             <div key={item.title} className="text-center p-6 border border-gray-200 rounded-lg">
               <h3 className="font-semibold text-dark-text text-lg">{item.title}</h3>
@@ -131,30 +124,27 @@ export default function AdvertisePage() {
         </div>
       </section>
 
-      {/* Guest Post Packages */}
+      {/* Partnership Options */}
       <section className="bg-off-white py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="font-[family-name:var(--font-headline)] text-3xl font-bold text-dark-text text-center mb-10">
-            Guest Post Packages
+          <h2 className="font-[family-name:var(--font-headline)] text-3xl font-bold text-dark-text text-center mb-4">
+            Partnership Options
           </h2>
+          <p className="text-center text-medium-gray mb-10 max-w-2xl mx-auto">
+            We offer flexible content partnerships tailored to your goals. Contact us for custom solutions and pricing.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {packages.map((pkg) => (
+            {partnershipOptions.map((option) => (
               <div
-                key={pkg.name}
-                className={`bg-white rounded-lg p-8 border-2 ${
-                  pkg.popular ? "border-red-accent shadow-lg scale-105" : "border-gray-200"
-                }`}
+                key={option.name}
+                className="bg-white rounded-lg p-8 border-2 border-gray-200"
               >
-                {pkg.popular && (
-                  <span className="bg-red-accent text-white text-xs font-bold uppercase px-3 py-1 rounded-full">
-                    Most Popular
-                  </span>
-                )}
-                <h3 className="font-[family-name:var(--font-headline)] text-2xl font-bold text-dark-text mt-4">
-                  {pkg.name}
+                <h3 className="font-[family-name:var(--font-headline)] text-2xl font-bold text-dark-text">
+                  {option.name}
                 </h3>
+                <p className="text-sm text-medium-gray mt-2">{option.desc}</p>
                 <ul className="mt-6 space-y-3">
-                  {pkg.features.map((f) => (
+                  {option.features.map((f) => (
                     <li key={f} className="flex items-start gap-2 text-sm text-medium-gray">
                       <svg className="w-5 h-5 text-green-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -165,27 +155,19 @@ export default function AdvertisePage() {
                 </ul>
                 <button
                   onClick={() => {
-                    setFormData((d) => ({ ...d, selectedPackage: `Guest Post - ${pkg.name}` }));
                     document.getElementById("contact-form")?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className={`w-full mt-8 py-3 rounded-lg font-semibold transition-colors ${
-                    pkg.popular
-                      ? "bg-red-accent hover:bg-red-hover text-white"
-                      : "bg-navy hover:bg-navy-dark text-white"
-                  }`}
+                  className="w-full mt-8 py-3 rounded-lg font-semibold transition-colors bg-navy hover:bg-navy-dark text-white"
                 >
-                  Request a Quote
+                  Get in Touch
                 </button>
               </div>
             ))}
           </div>
-          <p className="text-center text-sm text-medium-gray mt-6">
-            Enterprise / Bulk orders? Contact us for custom pricing on 5, 10, or 20+ articles.
-          </p>
         </div>
       </section>
 
-      {/* Directory Plans */}
+      {/* Directory Listings */}
       <section className="max-w-7xl mx-auto px-4 py-16">
         <h2 className="font-[family-name:var(--font-headline)] text-3xl font-bold text-dark-text text-center mb-10">
           Business Directory Listings
@@ -211,7 +193,7 @@ export default function AdvertisePage() {
         </div>
       </section>
 
-      {/* Process */}
+      {/* How It Works */}
       <section className="bg-off-white py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="font-[family-name:var(--font-headline)] text-3xl font-bold text-dark-text mb-10">
@@ -219,9 +201,9 @@ export default function AdvertisePage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { step: "1", title: "Choose a Package", desc: "Select the guest post or directory plan that fits your needs." },
-              { step: "2", title: "Send Your Article", desc: "Submit your content or let us write it for you with your target keywords." },
-              { step: "3", title: "Published in 24-48h", desc: "Your article goes live with permanent dofollow backlinks." },
+              { step: "1", title: "Reach Out", desc: "Tell us about your brand and goals through the form below." },
+              { step: "2", title: "We Plan Together", desc: "Our editorial team works with you to craft the right content strategy." },
+              { step: "3", title: "Content Goes Live", desc: "Your content is published and promoted to our readership." },
             ].map((item) => (
               <div key={item.step}>
                 <div className="w-12 h-12 bg-red-accent text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto">
@@ -238,7 +220,7 @@ export default function AdvertisePage() {
       {/* Contact Form */}
       <section id="contact-form" className="max-w-2xl mx-auto px-4 py-16">
         <h2 className="font-[family-name:var(--font-headline)] text-3xl font-bold text-dark-text text-center mb-8">
-          Get Started Today
+          Start a Conversation
         </h2>
 
         {status === "success" ? (
@@ -274,22 +256,8 @@ export default function AdvertisePage() {
               onChange={(e) => setFormData((d) => ({ ...d, company: e.target.value }))}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy"
             />
-            <select
-              value={formData.selectedPackage}
-              onChange={(e) => setFormData((d) => ({ ...d, selectedPackage: e.target.value }))}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-navy text-medium-gray"
-            >
-              <option value="">Select a Package</option>
-              <option>Guest Post - Starter</option>
-              <option>Guest Post - Professional</option>
-              <option>Guest Post - Premium</option>
-              <option>Guest Post - Enterprise / Bulk</option>
-              <option>Directory - Basic</option>
-              <option>Directory - Pro</option>
-              <option>Directory - Premium</option>
-            </select>
             <textarea
-              placeholder="Tell us about your project, target keywords, and any requirements..."
+              placeholder="Tell us about your brand and what you're looking to achieve..."
               value={formData.message}
               onChange={(e) => setFormData((d) => ({ ...d, message: e.target.value }))}
               rows={5}
@@ -300,7 +268,7 @@ export default function AdvertisePage() {
               disabled={status === "loading"}
               className="w-full bg-red-accent hover:bg-red-hover disabled:opacity-50 text-white font-semibold py-4 rounded-lg transition-colors text-lg"
             >
-              {status === "loading" ? "Sending..." : "Submit Inquiry"}
+              {status === "loading" ? "Sending..." : "Send Inquiry"}
             </button>
             {status === "error" && (
               <p className="text-red-500 text-sm text-center">Something went wrong. Please try again.</p>
@@ -313,10 +281,10 @@ export default function AdvertisePage() {
       <section className="bg-navy-dark text-white py-12">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <p className="text-lg font-semibold">
-            All posts are permanently indexed. We never remove published content.
+            All published content remains live permanently on our platform.
           </p>
           <p className="text-gray-400 mt-2 text-sm">
-            Trusted by SEO agencies, businesses, and marketers worldwide.
+            Trusted by leading brands, agencies, and organizations nationwide.
           </p>
         </div>
       </section>

@@ -4,7 +4,8 @@ import { prisma } from "@/lib/prisma/client";
 import { aggregateNews } from "@/lib/news-apis/aggregator";
 import { CATEGORY_DEFINITIONS } from "@/lib/news-apis/category-mapper";
 import { fetchOgImage } from "@/lib/news-apis/og-image";
-import { scrapeArticleContent } from "@/lib/news-apis/content-scraper";
+import { scrapeArticleContent, sanitizeText } from "@/lib/news-apis/content-scraper";
+import { getAuthorForCategory } from "@/lib/authors";
 import { generateSlug } from "@/lib/utils";
 
 async function getCategoryId(categorySlug: string): Promise<string> {
@@ -27,25 +28,6 @@ async function getCategoryId(categorySlug: string): Promise<string> {
   return category.id;
 }
 
-async function getWireServicesAuthorId(): Promise<string> {
-  let author = await prisma.author.findUnique({
-    where: { slug: "wire-services" },
-  });
-
-  if (!author) {
-    author = await prisma.author.create({
-      data: {
-        name: "Wire Services",
-        slug: "wire-services",
-        email: "wire@newyorkjournalamerican.com",
-        bio: "Aggregated news from trusted wire services and news agencies worldwide.",
-        role: "wire",
-      },
-    });
-  }
-
-  return author.id;
-}
 
 async function pingIndexNow(urls: string[]) {
   const key = process.env.INDEXNOW_KEY;
@@ -79,7 +61,10 @@ export async function GET(request: Request) {
     const newUrls: string[] = [];
 
     for (const article of articles) {
-      const slug = generateSlug(article.title);
+      // Sanitize title and description to decode HTML entities (&#x27; etc.)
+      const cleanTitle = sanitizeText(article.title);
+      const cleanDescription = sanitizeText(article.description || "");
+      const slug = generateSlug(cleanTitle);
 
       // Skip if already exists
       const exists = await prisma.article.findFirst({
@@ -93,13 +78,12 @@ export async function GET(request: Request) {
         continue;
       }
 
-      const categoryId = await getCategoryId(article.mappedCategory);
-      const authorId = await getWireServicesAuthorId();
-
-      // If no image from RSS, try fetching OG image from the article URL
+      // If no image from RSS, or if BBC (low-res thumbnails), try fetching OG image
       let image = article.image;
-      if (!image && article.url) {
-        image = await fetchOgImage(article.url);
+      const isBbc = article.url?.includes(".bbc.co.uk") || article.url?.includes(".bbci.co.uk");
+      if ((!image || isBbc) && article.url) {
+        const ogImage = await fetchOgImage(article.url);
+        if (ogImage) image = ogImage;
       }
 
       // Try to scrape full article content from the source URL
@@ -114,22 +98,23 @@ export async function GET(request: Request) {
           .map((b) => b.content.map((c: any) => c.text).join(" "))
           .join(" ")
           .split(/\s+/).length;
-      } else {
-        // Fallback to RSS description
-        contentBlocks = [
-          {
-            type: "paragraph",
-            content: [{ type: "text", text: article.description || "" }],
-          },
-        ];
-        wordCount = article.description?.split(/\s+/).length || 50;
       }
+
+      // QUALITY GATE: Skip articles with insufficient content
+      // Require at least 150 words and 3 content blocks to publish
+      if (wordCount < 150 || contentBlocks.length < 3) {
+        skipped++;
+        continue;
+      }
+
+      const categoryId = await getCategoryId(article.mappedCategory);
+      const authorId = await getAuthorForCategory(article.mappedCategory, cleanTitle);
 
       await prisma.article.create({
         data: {
-          title: article.title,
+          title: cleanTitle,
           slug,
-          excerpt: article.description?.slice(0, 300) || "",
+          excerpt: cleanDescription.slice(0, 300),
           content: {
             type: "doc",
             content: contentBlocks,
