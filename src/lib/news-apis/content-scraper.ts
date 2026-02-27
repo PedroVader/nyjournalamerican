@@ -18,9 +18,18 @@ function decodeEntities(text: string): string {
     .replace(/&#039;/g, "'")
     .replace(/&apos;/g, "'")
     .replace(/&nbsp;/g, " ")
-    .replace(/&#\d+;/g, "")
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)))
     .replace(/\s+/g, " ")
     .trim();
+}
+
+/**
+ * Sanitize text for titles, excerpts, and any user-facing strings.
+ * Decodes HTML entities and strips residual tags.
+ */
+export function sanitizeText(text: string): string {
+  return decodeEntities(text);
 }
 
 const NOISE_EXACT = new Set([

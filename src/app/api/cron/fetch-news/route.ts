@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma/client";
 import { aggregateNews } from "@/lib/news-apis/aggregator";
 import { CATEGORY_DEFINITIONS } from "@/lib/news-apis/category-mapper";
 import { fetchOgImage } from "@/lib/news-apis/og-image";
-import { scrapeArticleContent } from "@/lib/news-apis/content-scraper";
+import { scrapeArticleContent, sanitizeText } from "@/lib/news-apis/content-scraper";
 import { getAuthorForCategory } from "@/lib/authors";
 import { generateSlug } from "@/lib/utils";
 
@@ -61,7 +61,10 @@ export async function GET(request: Request) {
     const newUrls: string[] = [];
 
     for (const article of articles) {
-      const slug = generateSlug(article.title);
+      // Sanitize title and description to decode HTML entities (&#x27; etc.)
+      const cleanTitle = sanitizeText(article.title);
+      const cleanDescription = sanitizeText(article.description || "");
+      const slug = generateSlug(cleanTitle);
 
       // Skip if already exists
       const exists = await prisma.article.findFirst({
@@ -74,9 +77,6 @@ export async function GET(request: Request) {
         skipped++;
         continue;
       }
-
-      const categoryId = await getCategoryId(article.mappedCategory);
-      const authorId = await getAuthorForCategory(article.mappedCategory, article.title);
 
       // If no image from RSS, or if BBC (low-res thumbnails), try fetching OG image
       let image = article.image;
@@ -98,22 +98,23 @@ export async function GET(request: Request) {
           .map((b) => b.content.map((c: any) => c.text).join(" "))
           .join(" ")
           .split(/\s+/).length;
-      } else {
-        // Fallback to RSS description
-        contentBlocks = [
-          {
-            type: "paragraph",
-            content: [{ type: "text", text: article.description || "" }],
-          },
-        ];
-        wordCount = article.description?.split(/\s+/).length || 50;
       }
+
+      // QUALITY GATE: Skip articles with insufficient content
+      // Require at least 150 words and 3 content blocks to publish
+      if (wordCount < 150 || contentBlocks.length < 3) {
+        skipped++;
+        continue;
+      }
+
+      const categoryId = await getCategoryId(article.mappedCategory);
+      const authorId = await getAuthorForCategory(article.mappedCategory, cleanTitle);
 
       await prisma.article.create({
         data: {
-          title: article.title,
+          title: cleanTitle,
           slug,
-          excerpt: article.description?.slice(0, 300) || "",
+          excerpt: cleanDescription.slice(0, 300),
           content: {
             type: "doc",
             content: contentBlocks,
