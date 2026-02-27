@@ -5,6 +5,7 @@ import { aggregateNews } from "@/lib/news-apis/aggregator";
 import { CATEGORY_DEFINITIONS } from "@/lib/news-apis/category-mapper";
 import { fetchOgImage } from "@/lib/news-apis/og-image";
 import { scrapeArticleContent } from "@/lib/news-apis/content-scraper";
+import { getAuthorForCategory } from "@/lib/authors";
 import { generateSlug } from "@/lib/utils";
 
 async function getCategoryId(categorySlug: string): Promise<string> {
@@ -27,25 +28,6 @@ async function getCategoryId(categorySlug: string): Promise<string> {
   return category.id;
 }
 
-async function getWireServicesAuthorId(): Promise<string> {
-  let author = await prisma.author.findUnique({
-    where: { slug: "wire-services" },
-  });
-
-  if (!author) {
-    author = await prisma.author.create({
-      data: {
-        name: "Wire Services",
-        slug: "wire-services",
-        email: "wire@newyorkjournalamerican.com",
-        bio: "Aggregated news from trusted wire services and news agencies worldwide.",
-        role: "wire",
-      },
-    });
-  }
-
-  return author.id;
-}
 
 async function pingIndexNow(urls: string[]) {
   const key = process.env.INDEXNOW_KEY;
@@ -94,12 +76,14 @@ export async function GET(request: Request) {
       }
 
       const categoryId = await getCategoryId(article.mappedCategory);
-      const authorId = await getWireServicesAuthorId();
+      const authorId = await getAuthorForCategory(article.mappedCategory, article.title);
 
-      // If no image from RSS, try fetching OG image from the article URL
+      // If no image from RSS, or if BBC (low-res thumbnails), try fetching OG image
       let image = article.image;
-      if (!image && article.url) {
-        image = await fetchOgImage(article.url);
+      const isBbc = article.url?.includes(".bbc.co.uk") || article.url?.includes(".bbci.co.uk");
+      if ((!image || isBbc) && article.url) {
+        const ogImage = await fetchOgImage(article.url);
+        if (ogImage) image = ogImage;
       }
 
       // Try to scrape full article content from the source URL

@@ -103,10 +103,9 @@ export default async function ArticlePage({ params }: Props) {
         <div className="mt-6 pb-6 border-b border-gray-200">
           <ArticleMetadata
             author={{ name: article.author.name, slug: article.author.slug }}
+            category={{ name: article.category.name, slug: article.category.slug }}
             publishedAt={article.publishedAt?.toISOString() || null}
             readingTime={article.readingTime}
-            sourceName={article.sourceName}
-            sourceUrl={article.sourceUrl}
           />
         </div>
 
@@ -136,25 +135,6 @@ export default async function ArticlePage({ params }: Props) {
         <div className="mt-8">
           <ArticleBody content={article.content} />
         </div>
-
-        {/* Source attribution */}
-        {article.sourceName && (
-          <div className="mt-8 p-4 bg-off-white rounded-lg text-sm text-medium-gray">
-            Source:{" "}
-            {article.sourceUrl ? (
-              <a
-                href={article.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-dark-text hover:text-red-accent underline"
-              >
-                {article.sourceName}
-              </a>
-            ) : (
-              article.sourceName
-            )}
-          </div>
-        )}
 
         {/* Tags */}
         {article.tags && article.tags.length > 0 && (

@@ -36,6 +36,8 @@ export function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
+      site: "@NewYorkJA",
+      creator: "@NewYorkJA",
       title: fullTitle,
       description: desc,
       images: [ogImage],
@@ -91,6 +93,6 @@ export function generateOrganizationJsonLd() {
     logo: `${SITE_URL}/logo.svg`,
     foundingDate: "1882",
     description: SITE_DESCRIPTION,
-    sameAs: [],
+    sameAs: ["https://x.com/NewYorkJA"],
   };
 }
