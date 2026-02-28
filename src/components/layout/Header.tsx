@@ -76,7 +76,7 @@ export function Header() {
               alt="Logo"
               width={1000}
               height={500}
-              className="w-full md:w-4/5 lg:w-3/5 h-auto mx-auto"
+              className="w-full md:w-4/5 lg:w-1/2 h-auto mx-auto"
               priority
             />
           </Link>
