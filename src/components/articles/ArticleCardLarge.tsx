@@ -40,7 +40,7 @@ export function ArticleCardLarge({
             />
           ) : (
             <Image
-              src="/logo-nyjournalamerican.jpeg"
+              src="/background.png"
               alt={title}
               fill
               className="object-contain bg-gray-100 p-8"
