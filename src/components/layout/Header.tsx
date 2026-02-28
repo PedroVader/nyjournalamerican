@@ -29,10 +29,16 @@ export function Header() {
             })}
           </span>
           <div className="flex items-center gap-4">
-            <Link href="/advertise" className="hover:text-gold transition-colors">
+            <Link
+              href="/advertise"
+              className="hover:text-gold transition-colors"
+            >
               Advertise
             </Link>
-            <Link href="/directory" className="hover:text-gold transition-colors">
+            <Link
+              href="/directory"
+              className="hover:text-gold transition-colors"
+            >
               Directory
             </Link>
             <Link href="/contact" className="hover:text-gold transition-colors">
@@ -46,7 +52,7 @@ export function Header() {
               title="Follow us on X"
             >
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
               </svg>
             </a>
           </div>
@@ -57,12 +63,22 @@ export function Header() {
       <div className="bg-navy border-b border-navy-dark">
         <div className="max-w-7xl mx-auto px-4 py-6 text-center">
           <Link href="/">
+            {/* 
             <h1 className="font-[family-name:var(--font-headline)] text-white text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight">
               NEW YORK JOURNAL AMERICAN
             </h1>
             <p className="text-gold text-[10px] md:text-xs tracking-[0.3em] mt-1 uppercase">
               An American Paper for the American People — Since 1882
             </p>
+            */}
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={1000}
+              height={500}
+              className="w-full md:w-4/5 lg:w-3/5 h-auto mx-auto"
+              priority
+            />
           </Link>
         </div>
       </div>

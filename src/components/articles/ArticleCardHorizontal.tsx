@@ -35,7 +35,7 @@ export function ArticleCardHorizontal({
             />
           ) : (
             <Image
-              src="/logo-nyjournalamerican.jpeg"
+              src="/background.png"
               alt={title}
               fill
               className="object-contain bg-gray-100 p-4"
@@ -45,7 +45,11 @@ export function ArticleCardHorizontal({
         </div>
       </Link>
       <div className="flex-1 min-w-0">
-        <ArticleMetadata category={category} publishedAt={publishedAt} compact />
+        <ArticleMetadata
+          category={category}
+          publishedAt={publishedAt}
+          compact
+        />
         <Link href={`/${category.slug}/${slug}`}>
           <h3 className="font-[family-name:var(--font-headline)] text-base md:text-lg font-bold text-dark-text group-hover:text-red-accent transition-colors mt-1 line-clamp-2 leading-snug">
             {title}

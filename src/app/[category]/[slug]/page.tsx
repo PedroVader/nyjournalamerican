@@ -41,10 +41,12 @@ export default async function ArticlePage({ params }: Props) {
   if (!article || article.status !== "PUBLISHED") notFound();
 
   // Increment views
-  prisma.article.update({
-    where: { id: article.id },
-    data: { views: { increment: 1 } },
-  }).catch(() => {});
+  prisma.article
+    .update({
+      where: { id: article.id },
+      data: { views: { increment: 1 } },
+    })
+    .catch(() => {});
 
   const related = await prisma.article.findMany({
     where: {
@@ -63,7 +65,8 @@ export default async function ArticlePage({ params }: Props) {
     description: article.excerpt || "",
     image: article.featuredImage || undefined,
     url,
-    publishedAt: article.publishedAt?.toISOString() || article.createdAt.toISOString(),
+    publishedAt:
+      article.publishedAt?.toISOString() || article.createdAt.toISOString(),
     author: article.author.name,
     category: article.category.name,
   });
@@ -103,7 +106,10 @@ export default async function ArticlePage({ params }: Props) {
         <div className="mt-6 pb-6 border-b border-gray-200">
           <ArticleMetadata
             author={{ name: article.author.name, slug: article.author.slug }}
-            category={{ name: article.category.name, slug: article.category.slug }}
+            category={{
+              name: article.category.name,
+              slug: article.category.slug,
+            }}
             publishedAt={article.publishedAt?.toISOString() || null}
             readingTime={article.readingTime}
           />
@@ -117,10 +123,14 @@ export default async function ArticlePage({ params }: Props) {
         {/* Featured Image */}
         <div className="relative aspect-[16/9] mt-8 rounded-lg overflow-hidden">
           <Image
-            src={article.featuredImage || "/logo-nyjournalamerican.jpeg"}
+            src={article.featuredImage || "/background.png"}
             alt={article.imageCaption || article.title}
             fill
-            className={article.featuredImage ? "object-cover" : "object-contain bg-gray-100 p-12"}
+            className={
+              article.featuredImage
+                ? "object-cover"
+                : "object-contain bg-gray-100 p-12"
+            }
             sizes="(max-width: 768px) 100vw, 800px"
             priority
           />

@@ -47,10 +47,12 @@ export function FeaturedBanner({
           </div>
           <div className="relative aspect-[16/10] rounded-lg overflow-hidden">
             <Image
-              src={featuredImage || "/logo-nyjournalamerican.jpeg"}
+              src={featuredImage || "/background.png"}
               alt={title}
               fill
-              className={featuredImage ? "object-cover" : "object-contain bg-navy p-8"}
+              className={
+                featuredImage ? "object-cover" : "object-contain bg-navy p-8"
+              }
               sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>
